@@ -8,3 +8,9 @@ you lose hearts.
 ## Controls
 
 WASD + Arrow Key friendly
+
+## Screenshots
+
+![Title Screen](https://raw.githubusercontent.com/hanavilla/wiggle-platformer/main/START.PNG)
+
+![Playing Screen](https://raw.githubusercontent.com/hanavilla/wiggle-platformer/main/PLAYING.PNG)
