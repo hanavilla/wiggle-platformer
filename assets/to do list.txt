@@ -1,0 +1,29 @@
+to do list
+
+- add in music for 
+	- lose screen
+	- win screen :3
+
+-add in multiple item types
+-more enemies & ways to kill them
+-get points from completing levels
+-redo HUD gem
+-redetail levels
+
+
+
+
+
+- i think teleportation portals would be cool
+	- **side note, make powerups (jetpack,
+	  hopping, firearms, speed)
+		- to do this, you gotta make a separate class 
+		for gems
+- kill enemies somehow
+	- can make them drop items/powerups
+- hit blocks, make them drop items/enemies
+- allow for buttons pressing and opening gates with keys
+
+note:
+	grass HEX: #005E47
+	grass RGB: (0, 94, 71)
