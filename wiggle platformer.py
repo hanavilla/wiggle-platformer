@@ -66,9 +66,8 @@ door_img = pygame.image.load('assets/images/PNG/tiles/door.png').convert_alpha()
 grass_dirt = pygame.image.load('assets/images/PNG/tiles/grass_dirt.png').convert_alpha()
 gold_img = pygame.image.load('assets/images/PNG/items/gold_1.png').convert_alpha()
 bronze_img = pygame.image.load('assets/images/PNG/items/bronze_1.png').convert_alpha()
-portal_img = pygame.image.load('assets/images/PNG/items/portal_yellow.png').convert_alpha()
 heart_img = pygame.image.load('assets/images/PNG/items/heart.png').convert_alpha()
-gem_img = pygame.image.load('assets/images/HUD/coin_bronze.png').convert_alpha()
+gem_img = pygame.image.load('assets/images/HUD/coin_gold.png').convert_alpha()
 bg_img = pygame.image.load('assets/images/background/backgroundColorForest.png').convert_alpha()
 
 # Load sounds
@@ -76,6 +75,8 @@ jump_snd = pygame.mixer.Sound('assets/sounds/jump.wav')
 gem_snd = pygame.mixer.Sound('assets/sounds/obtained_coin.ogg')
 level_up_snd = pygame.mixer.Sound('assets/sounds/level_complete.ogg')
 hurt_snd = pygame.mixer.Sound('assets/sounds/hurt.ogg')
+lose_snd = pygame.mixer.Sound('assets/sounds/lose.ogg')
+win_snd = pygame.mixer.Sound('assets/sounds/win.ogg')
 
 # Load Music
 intro = 'assets/music/intro.ogg'
@@ -415,14 +416,6 @@ class FlyMan(Enemy):
         self.animate()
 
 
-class Portal(Entity):
-    
-    def __init__(self, x, y, image):
-        super().__init__(x, y, image)
-
-    def teleport(self, character):
-        pass            
-
 # Helper Functions
 def show_start_screen():
     text = font_xl.render(TITLE, True, WHITE)
@@ -438,6 +431,10 @@ def show_start_screen():
 
 def show_lose_screen():
     text = font_xl.render('GAME OVER', True, WHITE)
+
+    # hi Hannah it me Kuya
+    kuya = font_xl.render('HEEEEEY', True, BLACK)
+    
     rect = text.get_rect()
     rect.midbottom = WIDTH // 2, HEIGHT // 2
     screen.blit(text, rect)
@@ -513,7 +510,7 @@ def start_game():
     
 
 def start_level():
-    global platforms, items, enemies, portals, player, goal, all_sprites
+    global platforms, items, enemies, player, goal, all_sprites
     global gravity, terminal_velocity
     global world_width, world_height
 
@@ -521,7 +518,6 @@ def start_level():
     platforms = pygame.sprite.Group()
     items = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
-    portals = pygame.sprite.Group()
     player = pygame.sprite.GroupSingle()
     goal = pygame.sprite.Group()
     all_sprites = pygame.sprite.Group()
@@ -553,17 +549,11 @@ def start_level():
     for loc in data['gold_locs']:
         items.add( Gold(loc[0], loc[1], gold_img) )
 
-    for loc in data['bronze_locs']:
-        items.add( Bronze(loc[0], loc[1], bronze_img) )
-
     for loc in data['spikeman_locs']:
         enemies.add( Slime(loc[0], loc[1], slime_imgs_lt) )
 
     for loc in data['flyman_locs']:
         enemies.add( FlyMan(loc[0], loc[1], wingman_imgs_rt) )
-
-    for loc in data['portal_locs']:
-        portals.add( Portal(loc[0], loc[1], portal_img) )
 
 
     gravity = data['gravity']
@@ -582,11 +572,15 @@ def start_level():
     pygame.mixer.music.play(-1)
     
 # Game loop
+play_lose_sound = True
+play_win_sound = True
 running = True
 grid_on = False
+earn_points = True
 
 start_game()
 start_level()
+
 
 while running:
     # Input handling
@@ -612,10 +606,19 @@ while running:
                 elif event.key == pygame.K_w:
                     hero.jump()
 
-            elif stage == LOSE or stage == WIN:
+            elif stage == LOSE:
                 if event.key == pygame.K_r:
                     start_game()
                     start_level()
+                    play_lose_sound = False
+                    earn_points = True
+
+            elif stage == WIN:
+                if event.key == pygame.K_r:
+                    start_game()
+                    start_level()
+                    play_win_sound = False
+                    earn_points = True
                     
 
     pressed = pygame.key.get_pressed()
@@ -655,6 +658,10 @@ while running:
                 stage = PLAYING
             else:
                 stage = WIN
+
+        if earn_points == True:
+            hero.score += 100
+            earn_points = False
     
 
     if hero.rect.centerx < WIDTH // 2:
@@ -683,13 +690,26 @@ while running:
         screen.fill(GRAY)
         show_start_screen()
     elif stage == LOSE:
+        
         screen.fill(BLACK)
         show_lose_screen()
+        pygame.mixer.music.stop()
+
+        if play_lose_sound == True:
+            lose_snd.play()
+            play_lose_sound = False
+
+            
     elif stage == LEVEL_COMPLETE:
         show_level_complete_screen()
     elif stage == WIN:
         show_win_screen()
-        
+
+        if play_win_sound == True:
+            win_snd.play()
+            play_win_sound = False
+
+
     # Update screen
     pygame.display.update()
 

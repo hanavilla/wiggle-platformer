@@ -7,7 +7,8 @@ to do list
 -add in multiple item types
 -more enemies & ways to kill them
 -get points from completing levels
--redo HUD gem
+-redo HUD gem (make the HUD show difference of coins in 
+bronze and gold
 -redetail levels
 
 
